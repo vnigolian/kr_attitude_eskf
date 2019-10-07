@@ -12,8 +12,8 @@
 #include "AttitudeESKF.hpp"
 #include <iostream>
 
-#define ACC_COV 0.4
-#define GYR_COV 0.1
+#define ACC_COV 0.4//0.4
+#define GYR_COV 5 //0.1
 
 
 using namespace std;
@@ -25,14 +25,39 @@ using namespace kr;
   typedef kr::AttitudeESKF::quat Quat;
   
 int main(int argc, char **argv) {
+	cout<<"------------------------------------------------------------------------"<<endl;
+	
+	double acc_cov_factor(0);
+	double gyr_cov_factor(0);
+	
+	if(argc == 3){
+		acc_cov_factor = stof(argv[1]);
+		gyr_cov_factor = stof(argv[2]);
+	}else{
+		acc_cov_factor = ACC_COV;
+		gyr_cov_factor = GYR_COV;
+	}
+	
+	cout<<"acc cov factor : "<<acc_cov_factor<<endl;
+	cout<<"gyr cov factor : "<<gyr_cov_factor<<endl;
+	
+	const double dt(0.005);
+	
+	double acc_noise = acc_cov_factor * acc_cov_factor;
+	double gyr_noise = gyr_cov_factor * gyr_cov_factor * dt * dt;
+	
+	cout<<"acc noise : "<<acc_noise<<endl;
+	cout<<"gyr noise : "<<gyr_noise<<endl;
+	
+	
 	AttitudeESKF filter;
 	filter.setUsesMagnetometer(false);
 
 	Vec3 acc_init;
-	acc_init<<2.9908, -0.41632, -9.1926;
+	acc_init<<2.9382, -0.399575, -9.217725;
 	
 	Vec3 acc_init_cov;
-	acc_init_cov<<ACC_COV, ACC_COV, ACC_COV;
+	acc_init_cov<<acc_noise, acc_noise, acc_noise;
 	
 
 
@@ -51,10 +76,11 @@ int main(int argc, char **argv) {
 		cout<<"COULD NOT OPEN INPUT AND/OR OUTPUT FILES"<<endl;
 		return -1;
 	}
-	Mat3 acc_cov = Mat3::Identity()*ACC_COV;
-	Mat3 gyr_cov = Mat3::Identity()*GYR_COV;
 	
-	const double dt(0.005);
+	
+	Mat3 acc_cov = Mat3::Identity() * acc_noise;
+	Mat3 gyr_cov = Mat3::Identity() * gyr_noise;
+	
 	
 	
 	char rest_of_the_line[128];
@@ -72,25 +98,34 @@ int main(int argc, char **argv) {
 	
 	cout<<"running filter on data"<<endl;
 	
+	Quat result;
+	
 	while(i < iteration_count && 
 		fscanf(imu_input, "%lf, %lf, %lf, %lf, %lf, %lf, %lf, %s", 
 		&(acc.x()), &(acc.y()), &(acc.z()), &acc_norm, &(gyr.x()), &(gyr.y()), &(gyr.z()), rest_of_the_line) != EOF){
 			
+		//invert the axis
+		//acc.z() *= -1;
+		
 		filter.predict(gyr, dt, gyr_cov);
 		
 		filter.update(acc, acc_cov);
 		
-		Quat result = filter.getQuat();
+		result = filter.getQuat();
 		Vec3 bias = filter.getGyroBias();
 		
 		fprintf(gareth_output, "%lf, %lf, %lf, %lf, %lf, %lf, %lf\n",
-				result.w(), result.x(), result.y(), result.z(),
+				-result.z(), -result.y(), result.x(), result.w(),
 				bias.x(), bias.y(), bias.z());
 		
 		i++;
 	}
 	
+	
 	cout<<"DONE !"<<endl;
+	
+	cout<<"final quat : ("<<result.w()<<", "<<result.x()<<", "<<result.y()<<", "<<result.z()<<")"<<endl;
+	cout<<"------------------------------------------------------------------------"<<endl;
 
 	return 0;
 }
