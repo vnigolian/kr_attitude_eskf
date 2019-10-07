@@ -24,7 +24,7 @@ set(RELEVANT_LIBRARIES
 )
 
 # rigorous error checking
-add_definitions("-Wall -Werror -DATTITUDE_ESKF_BUILD_MAG -O3 -std=c++11")
+add_definitions("-Wall -DATTITUDE_ESKF_BUILD_MAG -O3 -std=c++11")
 
 # build main filter
 add_executable(${PROJECT_NAME}
