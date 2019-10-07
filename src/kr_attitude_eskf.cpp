@@ -9,13 +9,10 @@
  *		  Author: gareth
  */
 
-#include <kr_attitude_eskf/Node.hpp>
+#include "AttitudeESKF.hpp"
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "kr_attitude_eskf");
-  ros::NodeHandle nh;
-  ros::NodeHandle pnh("~");
-  kr_attitude_eskf::Node node(nh,pnh);
-  ros::spin();
+	
+	
   return 0;
 }

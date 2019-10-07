@@ -14,7 +14,7 @@
 
 #include <map>
 #include <vector>
-#include "kr_attitude_eskf/AttitudeESKF.hpp"
+#include "AttitudeESKF.hpp"
 
 namespace kr {
 

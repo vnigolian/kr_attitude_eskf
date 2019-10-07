@@ -12,8 +12,8 @@
 #ifndef KR_ATTITUDE_ESKF_H_
 #define KR_ATTITUDE_ESKF_H_
 
-#include <Eigen/Core>
-#include <Eigen/Dense>
+#include "Eigen/Core"
+#include "Eigen/Dense"
 
 namespace kr {
 

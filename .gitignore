@@ -10,6 +10,8 @@
 *.lo
 *.obj
 
+Eigen/*
+
 # CMAKE TEMPORARY FILES
 CMakeCache.txt
 CMakeFiles/
