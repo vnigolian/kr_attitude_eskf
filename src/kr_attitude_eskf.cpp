@@ -24,6 +24,14 @@ using namespace kr;
   typedef kr::AttitudeESKF::mat3 Mat3;
   typedef kr::AttitudeESKF::quat Quat;
   
+  
+  Vec3 transform_axes(Vec3 vec){
+	  Vec3 transformed;
+	  transformed<< vec.x(), vec.y(), vec.z();
+	  return transformed;
+  } 
+  
+  
 int main(int argc, char **argv) {
 	cout<<"------------------------------------------------------------------------"<<endl;
 	
@@ -104,6 +112,9 @@ int main(int argc, char **argv) {
 		fscanf(imu_input, "%lf, %lf, %lf, %lf, %lf, %lf, %lf, %s", 
 		&(acc.x()), &(acc.y()), &(acc.z()), &acc_norm, &(gyr.x()), &(gyr.y()), &(gyr.z()), rest_of_the_line) != EOF){
 			
+		acc = transform_axes(acc);
+		gyr = transform_axes(gyr);
+		
 		//invert the axis
 		//acc.z() *= -1;
 		
@@ -115,8 +126,11 @@ int main(int argc, char **argv) {
 		Vec3 bias = filter.getGyroBias();
 		
 		fprintf(gareth_output, "%lf, %lf, %lf, %lf, %lf, %lf, %lf\n",
-				-result.z(), -result.y(), result.x(), result.w(),
+				result.w(), result.x(), result.y(), result.z(),
 				bias.x(), bias.y(), bias.z());
+		/*printf("%lf, %lf, %lf, %lf, %lf, %lf, %lf\n",
+				result.w(), result.x(), result.y(), result.z(),
+				bias.x(), bias.y(), bias.z());*/
 		
 		i++;
 	}
