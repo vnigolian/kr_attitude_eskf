@@ -77,8 +77,8 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 	
-	FILE* imu_input = fopen("/home/val/Desktop/CSVdata/CL_40_1_imu.csv", "r");
-	FILE* gareth_output = fopen("/home/val/Desktop/gareth_output.csv", "w+");
+	FILE* imu_input = fopen("/Users/physilog-home/Desktop/Sprint Analysis/Files_GaitUp/CSVdata/CL_40_1_imu.csv", "r");
+	FILE* gareth_output = fopen("/Users/physilog-home/Desktop/gareth_output.csv", "w+");
 	
 	if(!imu_input || !gareth_output){
 		cout<<"COULD NOT OPEN INPUT AND/OR OUTPUT FILES"<<endl;
